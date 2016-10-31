@@ -1,0 +1,51 @@
+<hr />
+<?php
+error_reporting(E_ALL^E_NOTICE);
+use Phalcon\Tag;
+
+if(!$this->session->get('username')){
+    echo '请重新登录。';
+    echo Tag::linkTo("index", '<br />返 回');
+}else {
+    $old_user = $this->session->get('username');
+    echo "登录用户是： " . $old_user . "<hr />";
+}
+
+echo Tag::form(array("changepassword/changepasswd", "method"=>"post")); ?>
+    <table width="400" cellpadding="2" cellspacing="0" bgcolor="#cccccc">
+        <tr><td>原密码:</td>
+            <td><input type="password" name="old_passwd"
+                       size="20" maxlength="16"/></td>
+        </tr>
+        <tr><td>新密码:</td>
+            <td><input type="password" name="new_passwd"
+                       size="20" maxlength="16"/></td>
+        </tr>
+        <tr><td>再次输入新密码:</td>
+            <td><input type="password" name="new_passwd2"
+                       size="20" maxlength="16"/></td>
+        </tr>
+        <tr><td colspan="2" align="center">
+                <input type="submit" value="修改密码"/>
+            </td></tr>
+    </table>
+</form>
+
+<hr />
+<a href="/bookmark/member">Home</a> &nbsp;|&nbsp;
+<a href="/bookmark/addbm">添加书签</a> &nbsp;|&nbsp;
+<?php
+global $bm_table;
+
+if ($bm_table == true) {
+    echo "<a href=\"#\" onClick=\"bm_table.submit();\">删除书签</a> &nbsp;|&nbsp;";
+} else {
+    echo "<span style=\"color: #cccccc\">删除书签</span> &nbsp;|&nbsp;";
+}
+?>
+<a href="/bookmark/changepassword">修改密码</a>
+<br />
+<a href="/bookmark/share">推荐网址给我</a> &nbsp;|&nbsp;
+<a href="/bookmark/logout">注 销</a>
+
+<hr />

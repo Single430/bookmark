@@ -1,0 +1,74 @@
+<hr />
+<?php
+error_reporting(E_ALL^E_NOTICE);
+use Phalcon\Tag;
+
+if(!$this->session->get('username')){
+    echo '请重新登录。';
+    echo Tag::linkTo("index", '<br />返 回');
+}else {
+    $old_user = $this->session->get('username');
+    echo "登录用户是： " . $old_user . "<hr />";
+
+    function filled_out($form_vars) {
+        // test that each variable has a value
+        foreach ($form_vars as $key => $value) {
+            if ((!isset($key)) || ($value == '')) {
+                return false;
+            }
+        }
+        return true;
+    }
+    if(!filled_out($_POST)){
+        echo '<p>添加书签不成功。</p>';
+        exit;
+    }else{
+        $new_url = $_POST['new_url'];
+        if (strstr($new_url, "http://") and ($new_url != "http://")){
+            if(@fopen($new_url, 'r')){
+                $user = new Bookmark();
+                $user->username = $old_user;
+                $user->bm_URL = $new_url;
+                $result = $user->save();
+                if ($result){
+                    echo '添加书签成功: '. $new_url;
+                }else {
+                    echo '添加书签不成功。';
+                }
+            }else {
+                echo '网址不可用。';
+            }
+        }else {
+            echo '书签不可用。';
+        }
+    }
+}
+
+echo Tag::form(array("addbm", "method"=>"post", 'name'=>'bm_table')); ?>
+    <table width="250" cellpadding="2" cellspacing="0" bgcolor="#cccccc">
+        <tr><td>新书签:</td>
+            <td><input type="text" name="new_url" value="http://"
+                       size="30" maxlength="255"/></td></tr>
+        <tr><td colspan="2" align="center">
+                <input type="submit" value="添加书签"/></td></tr>
+    </table>
+</form>
+
+<hr />
+<a href="/bookmark/member">Home</a> &nbsp;|&nbsp;
+<a href="/bookmark/addbm">添加书签</a> &nbsp;|&nbsp;
+<?php
+global $bm_table;
+
+if ($bm_table == true) {
+    echo "<a href=\"#\" onClick=\"bm_table.submit();\">删除书签</a> &nbsp;|&nbsp;";
+} else {
+    echo "<span style=\"color: #cccccc\">删除书签</span> &nbsp;|&nbsp;";
+}
+?>
+<a href="/bookmark/changepassword">修改密码</a>
+<br />
+<a href="/bookmark/share">推荐网址给我</a> &nbsp;|&nbsp;
+<a href="/bookmark/logout">注 销</a>
+
+<hr />
